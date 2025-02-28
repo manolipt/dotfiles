@@ -1,0 +1,40 @@
+# Lines configured by zsh-newuser-install
+HISTFILE=~/.histfile
+HISTSIZE=1000
+SAVEHIST=1000
+setopt autocd
+bindkey -v
+# End of lines configured by zsh-newuser-install
+# The following lines were added by compinstall
+zstyle :compinstall filename '/home/localuser/.zshrc'
+
+autoload -Uz compinit
+compinit
+# End of lines added by compinstall
+
+if [[ -f ~/.zsh_aliases ]]; then
+	. ~/.zsh_aliases
+fi
+
+export EDITOR=nvim
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.dotnet/tools:$PATH"
+export PATH="$HOME/.cargo/bin:$PATH"
+#export PATH="$HOME/.emacs.d/bin:$PATH"
+
+eval "$(zoxide init zsh)"
+eval "$(thefuck --alias)"
+eval "$(starship init zsh)"
+source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# Check if we're inside a tmux session
+if [ -z "$TMUX" ]; then
+  # Not inside tmux, start tmux if available
+  if command -v tmux &> /dev/null; then
+    tmux attach-session -t default || tmux new-session -s default
+  fi
+else
+  # Inside tmux, run pfetch
+  pfetch
+fi
+

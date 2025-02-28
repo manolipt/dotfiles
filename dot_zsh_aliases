@@ -1,0 +1,25 @@
+alias cd="z"
+
+alias l="eza --icons"
+alias ls="eza --icons"
+alias ll="eza -l --icons"
+alias la="eza -A --icons"
+alias lla="eza -lA --icons"
+
+#alias emacs="emacsclient -c -a 'emacs'"
+
+alias g="git"
+alias gs="git status"
+alias lg="lazygit"
+alias gl="lazygit"
+
+alias v="fzf | nvim"
+mkcd ()
+{
+	mkdir -p $1 && cd $1
+}
+
+alias grep="rg"
+alias find="fd"
+alias cat="bat"
+

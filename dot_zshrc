@@ -20,6 +20,7 @@ export EDITOR=nvim
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.dotnet/tools:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
+export PATH="/snap/bin:$PATH"
 #export PATH="$HOME/.emacs.d/bin:$PATH"
 
 eval "$(zoxide init zsh)"

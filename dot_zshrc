@@ -28,6 +28,10 @@ eval "$(thefuck --alias)"
 eval "$(starship init zsh)"
 source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
+is_interactive() {
+  [[ -z "$ZSH_EXECUTION_STRING" ]]
+}
+
 is_ssh_session() {
   [ -n "$SSH_TTY" ] || [ -n "$SSH_CONNECTION" ] || (ps -o comm= -p $(ps -o ppid= -p $$) | grep -q sshd)
 }
@@ -48,7 +52,7 @@ start_tmux() {
 }
 
 # If TMUX is available and we're not in a session, start or enter one.
-if [ -z "$TMUX" ] && tmux_available; then
+if [ -z "$TMUX" ] && is_interactive && tmux_available; then
   session="default"
   if ! is_wsl && is_ssh_session; then
     session="ssh_tmux"
@@ -61,7 +65,7 @@ if [ -z "$TMUX" ] && tmux_available; then
   fi
 
   start_tmux $session
-else
+elif ! is_interactive; then
   # Inside tmux, run pfetch
   pfetch
 fi

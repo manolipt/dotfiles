@@ -28,12 +28,39 @@ eval "$(thefuck --alias)"
 eval "$(starship init zsh)"
 source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# Check if we're inside a tmux session
-if [ -z "$TMUX" ]; then
-  # Not inside tmux, start tmux if available
-  if command -v tmux &> /dev/null; then
-    tmux attach-session -t default || tmux new-session -s default
+is_ssh_session() {
+  [ -n "$SSH_TTY" ] || [ -n "$SSH_CONNECTION" ] || (ps -o comm= -p $(ps -o ppid= -p $$) | grep -q sshd)
+}
+
+is_wsl() {
+  grep -qi microsoft /proc/version || [ -f /run/WSL ] || [ -d /mnt/c/Windows ]
+}
+
+tmux_available() {
+  command -v tmux &> /dev/null
+}
+
+start_tmux() {
+  local session_name="$1"
+  [[ -z "$session_name" ]] && session_name="default"
+
+  tmux attach-session -t $session_name 2>/dev/null || tmux new-session -s $session_name
+}
+
+# If TMUX is available and we're not in a session, start or enter one.
+if [ -z "$TMUX" ] && tmux_available; then
+  session="default"
+  if ! is_wsl && is_ssh_session; then
+    session="ssh_tmux"
+  else
+    TRAPEXIT() {
+      if [[ -z "$TMUX" ]]; then
+        start_tmux
+      fi
+    }
   fi
+
+  start_tmux $session
 else
   # Inside tmux, run pfetch
   pfetch
